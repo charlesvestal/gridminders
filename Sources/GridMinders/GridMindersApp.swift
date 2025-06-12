@@ -7,7 +7,7 @@ struct GridMindersApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ReminderGridView(reminders: fetcher.reminders)
+            ReminderGridView(fetcher: fetcher)
                 .onAppear {
                     fetcher.requestAccess()
                 }

@@ -2,7 +2,7 @@ import SwiftUI
 import EventKit
 
 struct ReminderGridView: View {
-    var reminders: [EKReminder]
+    @ObservedObject var fetcher: ReminderFetcher
 
     private func categorize(_ reminder: EKReminder) -> (important: Bool, urgent: Bool) {
         // EventKit does not expose the "flagged" state, so we only
@@ -26,10 +26,11 @@ struct ReminderGridView: View {
     }
 
     var body: some View {
-        let q1 = reminders.filter { quadrant($0) == 1 }
-        let q2 = reminders.filter { quadrant($0) == 2 }
-        let q3 = reminders.filter { quadrant($0) == 3 }
-        let q4 = reminders.filter { quadrant($0) == 4 }
+        let list = fetcher.reminders
+        let q1 = list.filter { quadrant($0) == 1 }
+        let q2 = list.filter { quadrant($0) == 2 }
+        let q3 = list.filter { quadrant($0) == 3 }
+        let q4 = list.filter { quadrant($0) == 4 }
 
         return VStack {
             HStack {
