@@ -43,4 +43,29 @@ final class ReminderFetcher: ObservableObject {
             print("Failed to complete reminder", error)
         }
     }
+
+    /// Update a reminder's importance and urgency based on drag and drop.
+    /// - Parameters:
+    ///   - reminder: The reminder to modify.
+    ///   - important: If true, the reminder is given the highest priority.
+    ///   - urgent: If true, the reminder is assigned a due date of today. If
+    ///     false, any existing due date is cleared.
+    func modify(_ reminder: EKReminder, important: Bool, urgent: Bool) {
+        reminder.priority = important ? 1 : 0
+
+        if urgent {
+            let comps = Calendar.current.dateComponents([.year, .month, .day],
+                                                      from: Date())
+            reminder.dueDateComponents = comps
+        } else {
+            reminder.dueDateComponents = nil
+        }
+
+        do {
+            try store.save(reminder, commit: true)
+            loadReminders()
+        } catch {
+            print("Failed to modify reminder", error)
+        }
+    }
 }

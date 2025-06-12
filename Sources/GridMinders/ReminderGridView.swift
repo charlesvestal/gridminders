@@ -1,6 +1,7 @@
 import SwiftUI
 import EventKit
 import AppKit
+import UniformTypeIdentifiers
 
 struct ReminderGridView: View {
     @ObservedObject var fetcher: ReminderFetcher
@@ -35,18 +36,18 @@ struct ReminderGridView: View {
 
         return VStack {
             HStack {
-                quadrantView(title: "Important & Urgent", reminders: q1)
-                quadrantView(title: "Important & Not Urgent", reminders: q2)
+                quadrantView(title: "Important & Urgent", reminders: q1, important: true, urgent: true)
+                quadrantView(title: "Important & Not Urgent", reminders: q2, important: true, urgent: false)
             }
             HStack {
-                quadrantView(title: "Not Important & Urgent", reminders: q3)
-                quadrantView(title: "Not Important & Not Urgent", reminders: q4)
+                quadrantView(title: "Not Important & Urgent", reminders: q3, important: false, urgent: true)
+                quadrantView(title: "Not Important & Not Urgent", reminders: q4, important: false, urgent: false)
             }
         }
         .padding()
     }
 
-    private func quadrantView(title: String, reminders: [EKReminder]) -> some View {
+    private func quadrantView(title: String, reminders: [EKReminder], important: Bool, urgent: Bool) -> some View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.headline)
@@ -59,6 +60,9 @@ struct ReminderGridView: View {
                     }
                     .buttonStyle(BorderlessButtonStyle())
                     Text(reminder.title)
+                        .onDrag {
+                            NSItemProvider(object: reminder.calendarItemIdentifier as NSString)
+                        }
                 }
                 .onTapGesture(count: 2) {
                     if let url = URL(string: "x-apple-reminder://\(reminder.calendarItemIdentifier)") {
@@ -66,8 +70,25 @@ struct ReminderGridView: View {
                     }
                 }
             }
+            .onDrop(of: [UTType.text], isTargeted: nil) { providers in
+                handleDrop(providers: providers, important: important, urgent: urgent)
+            }
         }
         .frame(maxWidth: .infinity)
         .border(Color.gray)
+    }
+
+    private func handleDrop(providers: [NSItemProvider], important: Bool, urgent: Bool) -> Bool {
+        for provider in providers {
+            _ = provider.loadObject(ofClass: NSString.self) { object, _ in
+                guard let id = object as String? else { return }
+                DispatchQueue.main.async {
+                    if let reminder = fetcher.reminders.first(where: { $0.calendarItemIdentifier == id }) {
+                        fetcher.modify(reminder, important: important, urgent: urgent)
+                    }
+                }
+            }
+        }
+        return true
     }
 }

@@ -16,6 +16,11 @@ The four quadrants are:
 4. Not Important & Not Urgent
 
 Click the checkmark next to a task to mark it complete. Double-click a task to open it directly in the Reminders app.
+You can also drag a reminder from one quadrant to another:
+- Dropping a reminder into an important quadrant automatically marks it high
+  priority.
+- Dropping one into an urgent quadrant assigns it a due date of today.
+- Dragging an urgent reminder into a non‑urgent quadrant removes its due date.
 
 ## Building
 
