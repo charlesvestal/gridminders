@@ -1,6 +1,7 @@
 # GridMinders
 
 GridMinders is a simple macOS SwiftUI app that visualizes your Apple Reminders in an Eisenhower 2x2 grid.
+The reminders list updates automatically whenever tasks change in the Reminders app, so the grid stays current.
 
 The app requests permission to access the Reminders database using `EventKit`. Tasks are categorized as:
 
