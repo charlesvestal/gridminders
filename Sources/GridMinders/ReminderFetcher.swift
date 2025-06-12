@@ -7,10 +7,12 @@ final class ReminderFetcher: ObservableObject {
     private var changeCancellable: AnyCancellable?
 
     init() {
-        changeCancellable = NotificationCenter.default.publisher(for: .EKEventStoreChanged, object: store)
+        changeCancellable = NotificationCenter.default.publisher(for: .EKEventStoreChanged, object: nil)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                self?.loadReminders()
+                guard let self = self else { return }
+                self.store.reset()
+                self.loadReminders()
             }
     }
 
@@ -26,7 +28,8 @@ final class ReminderFetcher: ObservableObject {
         let predicate = store.predicateForReminders(in: nil)
         store.fetchReminders(matching: predicate) { reminders in
             DispatchQueue.main.async {
-                self.reminders = reminders ?? []
+                let incomplete = reminders?.filter { !$0.isCompleted } ?? []
+                self.reminders = incomplete
             }
         }
     }
