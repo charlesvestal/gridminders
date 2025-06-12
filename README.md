@@ -4,7 +4,7 @@ GridMinders is a simple macOS SwiftUI app that visualizes your Apple Reminders i
 
 The app requests permission to access the Reminders database using `EventKit`. Tasks are categorized as:
 
-- **Important** if they are flagged or have high priority.
+- **Important** if they have the highest priority.
 - **Urgent** if they are due today or within the next 24 hours.
 
 The four quadrants are:

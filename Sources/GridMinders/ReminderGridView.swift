@@ -5,7 +5,9 @@ struct ReminderGridView: View {
     var reminders: [EKReminder]
 
     private func categorize(_ reminder: EKReminder) -> (important: Bool, urgent: Bool) {
-        let important = reminder.isFlagged || reminder.priority == 1
+        // EventKit does not expose the "flagged" state, so we only
+        // treat reminders with the highest priority as important.
+        let important = reminder.priority == 1
         var urgent = false
         if let due = reminder.dueDateComponents?.date {
             urgent = Calendar.current.isDateInToday(due) || due < Date().addingTimeInterval(24*60*60)
