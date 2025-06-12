@@ -1,5 +1,6 @@
 import SwiftUI
 import EventKit
+import AppKit
 
 struct ReminderGridView: View {
     @ObservedObject var fetcher: ReminderFetcher
@@ -50,7 +51,20 @@ struct ReminderGridView: View {
             Text(title)
                 .font(.headline)
             List(reminders, id: \.calendarItemIdentifier) { reminder in
-                Text(reminder.title)
+                HStack {
+                    Button(action: {
+                        fetcher.complete(reminder)
+                    }) {
+                        Image(systemName: "checkmark.circle")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    Text(reminder.title)
+                }
+                .onTapGesture(count: 2) {
+                    if let url = URL(string: "x-apple-reminder://\(reminder.calendarItemIdentifier)") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity)

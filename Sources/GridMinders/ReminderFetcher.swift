@@ -33,4 +33,14 @@ final class ReminderFetcher: ObservableObject {
             }
         }
     }
+
+    func complete(_ reminder: EKReminder) {
+        reminder.isCompleted = true
+        do {
+            try store.save(reminder, commit: true)
+            loadReminders()
+        } catch {
+            print("Failed to complete reminder", error)
+        }
+    }
 }

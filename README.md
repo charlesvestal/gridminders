@@ -15,6 +15,8 @@ The four quadrants are:
 3. Not Important & Urgent
 4. Not Important & Not Urgent
 
+Click the checkmark next to a task to mark it complete. Double-click a task to open it directly in the Reminders app.
+
 ## Building
 
 The project is a Swift Package. Open the directory in Xcode (12 or later) or build from the command line:
